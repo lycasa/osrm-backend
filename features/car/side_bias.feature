@@ -5,7 +5,7 @@ Feature: Testbot - side bias
         Given the profile file "car" initialized with
         """
         profile.left_hand_driving = true
-        profile.turn_bias = 1/1.075
+        profile.turn_bias = 1.075
         """
         Given the node map
             """
@@ -28,7 +28,7 @@ Feature: Testbot - side bias
         Given the profile file "car" initialized with
         """
         profile.left_hand_driving = true
-        profile.turn_bias = 1.075
+        profile.turn_bias = 1 / 1.075
         """
         And the node map
             """
@@ -52,7 +52,6 @@ Feature: Testbot - side bias
         Given the profile file "testbot" initialized with
         """
         profile.left_hand_driving = true
-        profile.turn_bias = 1/1.075
         """
         And a grid size of 10 meters
         And the node map
