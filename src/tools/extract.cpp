@@ -56,7 +56,10 @@ return_code parseArguments(int argc, char *argv[], extractor::ExtractorConfig &e
             ->implicit_value(true)
             ->default_value(false),
         "Save conditional restrictions found during extraction to disk for use "
-        "during contraction");
+        "during contraction")("location-dependent-data,l",
+                              boost::program_options::value<boost::filesystem::path>(
+                                  &extractor_config.location_dependent_data_path),
+                              "Path to a GeoJSON file with location-dependent data");
 
     bool dummy;
     // hidden options, will be allowed on command line, but will not be
