@@ -157,6 +157,7 @@ std::size_t IntersectionHandler::findObviousTurn(const EdgeID via_edge,
     auto IsLowPriority = [](const auto &way_data) {
         return way_data.road_classification.IsLowPriorityRoadClass();
     };
+
     // These two Compare functions are used for sifting out best option and continue
     // candidates by evaluating all the ways in an intersection by what they share
     // with the in way. Ideal candidates are of similar road class with the in way
@@ -532,15 +533,8 @@ std::size_t IntersectionHandler::findObviousTurn(const EdgeID via_edge,
                 }
             }
         }
-
         return best_continue;
     }
 
     return 0;
 }
-
-} // namespace guidance
-} // namespace extractor
-} // namespace osrm
-
-#endif /*OSRM_EXTRACTOR_GUIDANCE_INTERSECTION_HANDLER_HPP_*/

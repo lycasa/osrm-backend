@@ -83,6 +83,8 @@ class RoadClassification
     bool IsMotorwayClass() const { return (0 != motorway_class) && (0 == link_class); }
     void SetMotorwayFlag(const bool new_value) { motorway_class = new_value; }
 
+    bool IsMotorwayLink() const { return (motorway_class != 0) && (link_class != 0); }
+
     bool IsRampClass() const { return (0 != motorway_class) && (0 != link_class); }
 
     bool IsLinkClass() const { return (0 != link_class); }
@@ -131,11 +133,25 @@ inline bool obviousByRoadClass(const RoadClassification in_classification,
                                const RoadClassification obvious_candidate,
                                const RoadClassification compare_candidate)
 {
-    // lower numbers are of higher priority
-    const bool has_high_priority = PRIORITY_DISTINCTION_FACTOR * obvious_candidate.GetPriority() <
-                                   compare_candidate.GetPriority();
+    // passing a motorway ramp on a motorway
+    if (in_classification.IsMotorwayClass() && obvious_candidate.IsMotorwayClass() &&
+        compare_candidate.IsMotorwayLink())
+        return true;
+
+    // passing a link class, other than motorway
+    if (!in_classification.IsMotorwayClass() && !obvious_candidate.IsMotorwayClass() &&
+        !in_classification.IsLinkClass() && !obvious_candidate.IsLinkClass() &&
+        !compare_candidate.IsMotorwayLink() && compare_candidate.IsLinkClass())
+        return true;
+
+    // lower numbers are of higher priority, except for motorway links which are links in general
+    // but also quite high priority roads
+    const bool has_high_priority = (PRIORITY_DISTINCTION_FACTOR * obvious_candidate.GetPriority() <
+                                    compare_candidate.GetPriority()) &&
+                                   !compare_candidate.IsMotorwayLink();
 
     const bool continues_on_same_class = in_classification == obvious_candidate;
+
     return (has_high_priority && continues_on_same_class) ||
            (!obvious_candidate.IsLowPriorityRoadClass() &&
             !in_classification.IsLowPriorityRoadClass() &&

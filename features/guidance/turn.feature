@@ -1349,3 +1349,33 @@ Feature: Simple Turns
        When I route I should get
             | waypoints | route    | turns                   |
             | a,d       | ab,dc,dc | depart,turn left,arrive |
+
+	@routing @car
+    Scenario: No turn instruction when turning from unnamed onto unnamed
+        Given the node map
+            """
+            a
+            |
+            |
+            |
+            |
+            b----------------c
+            |
+            |
+            |
+            |
+            |
+            |
+            d
+            """
+
+        And the ways
+            | nodes | highway     | name | ref   |
+            | ab    | trunk_link  |      |       |
+            | db    | secondary   |      | L 460 |
+            | bc    | secondary   |      |       |
+
+        When I route I should get
+            | from | to | route | ref          | turns                    |
+            | d    | c  | ,,    | L 460,,      | depart,turn right,arrive |
+            | c    | d  | ,,    | ,L 460,L 460 | depart,turn left,arrive  |
