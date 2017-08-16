@@ -1,3 +1,18 @@
+# 5.12.0
+  - Changes from 5.11:
+    - HTTP:
+      - New query parameter for route/table/match/trip plugings:
+        `exclude=` that can be used to exclude certain classes (e.g. exclude=motorway, exclude=toll).
+        This is configurable in the profile.
+    - NodeJS:
+      - New query option `exclude` for the route/table/match/trip plugins. (e.g. `exclude: ["motorway", "toll"]`)
+    - Profile:
+      - New property for profile table: `excludable` that can be used to configure which classes are excludable at query time.
+      - New optional property for profile table: `classes` that allows you to specify which classes you expect to be used.
+        We recommend this for better error messages around classes, otherwise the possible class names are infered automatically.
+    - Infrastructure:
+      - New file `.osrm.cell_metrics` created by `osrm-customize`.
+
 # 5.11.0
   - Changes from 5.10:
     - Features
