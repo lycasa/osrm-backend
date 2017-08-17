@@ -38,9 +38,9 @@ function setup()
     -- Should be inverted for left-driving countries.
     turn_bias   = use_left_hand_driving and 1/1.075 or 1.075,
 
-    -- a list of suffixes to suppress in name change instructions
+    -- a list of suffixes to suppress in name change instructions. The suffixes also include common substrings of each other
     suffix_list = {
-      'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'North', 'South', 'West', 'East'
+      'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'North', 'South', 'West', 'East', 'Nor', 'Sou', 'We', 'Ea'
     },
 
     barrier_whitelist = Set {

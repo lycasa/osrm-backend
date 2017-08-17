@@ -1,3 +1,8 @@
+# 5.12.0
+  - Changes from 5.11
+    - Bugfixes
+      - Fixed a bug that would result in unnecessary instructions, due to problems in suffix/prefix detection
+
 # 5.11.0
   - Changes from 5.10:
     - Features
