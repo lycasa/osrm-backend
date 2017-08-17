@@ -114,44 +114,64 @@ template <typename T> void write(io::FileWriter &writer, const util::vector_view
     writer.WriteFrom(data.data(), count);
 }
 
+template <typename T> inline unsigned char packBits(T &data, std::size_t index, std::size_t count)
+{
+    unsigned char value = 0;
+    for (std::size_t bit = 0; bit < count; ++bit, ++index)
+        value = (value << 1) | data[index];
+    return value;
+}
+
+template <typename T>
+inline void unpackBits(T &data, std::size_t index, std::size_t count, unsigned char value)
+{
+    const unsigned char mask = 1 << (count - 1);
+    for (std::size_t bit = 0; bit < count; value <<= 1, ++bit, ++index)
+        data[index] = value & mask;
+}
+
 template <> inline void read<bool>(io::FileReader &reader, util::vector_view<bool> &data)
 {
     const auto count = reader.ReadElementCount64();
     BOOST_ASSERT(data.size() == count);
-    for (const auto index : util::irange<std::uint64_t>(0, count))
+    for (const auto index : util::irange<std::uint64_t>(0, count / CHAR_BIT))
     {
-        data[index] = reader.ReadOne<bool>();
+        unpackBits(data, index, CHAR_BIT, reader.ReadOne<unsigned char>());
     }
+    unpackBits(data, count / CHAR_BIT, count % CHAR_BIT, reader.ReadOne<unsigned char>());
 }
 
 template <> inline void write<bool>(io::FileWriter &writer, const util::vector_view<bool> &data)
 {
     const auto count = data.size();
     writer.WriteElementCount64(count);
-    for (const auto index : util::irange<std::uint64_t>(0, count))
+    for (const auto index : util::irange<std::uint64_t>(0, count / CHAR_BIT))
     {
-        writer.WriteOne<bool>(data[index]);
+        writer.WriteOne<unsigned char>(packBits(data, index, CHAR_BIT));
     }
+    writer.WriteOne<unsigned char>(packBits(data, count / CHAR_BIT, count % CHAR_BIT));
 }
 
 template <> inline void read<bool>(io::FileReader &reader, std::vector<bool> &data)
 {
     const auto count = reader.ReadElementCount64();
     data.resize(count);
-    for (const auto index : util::irange<std::uint64_t>(0, count))
+    for (const auto index : util::irange<std::uint64_t>(0, count / CHAR_BIT))
     {
-        data[index] = reader.ReadOne<bool>();
+        unpackBits(data, index, CHAR_BIT, reader.ReadOne<unsigned char>());
     }
+    unpackBits(data, count / CHAR_BIT, count % CHAR_BIT, reader.ReadOne<unsigned char>());
 }
 
 template <> inline void write<bool>(io::FileWriter &writer, const std::vector<bool> &data)
 {
     const auto count = data.size();
     writer.WriteElementCount64(count);
-    for (const auto index : util::irange<std::uint64_t>(0, count))
+    for (const auto index : util::irange<std::uint64_t>(0, count / CHAR_BIT))
     {
-        writer.WriteOne<bool>(data[index]);
+        writer.WriteOne<unsigned char>(packBits(data, index, CHAR_BIT));
     }
+    writer.WriteOne<unsigned char>(packBits(data, count / CHAR_BIT, count % CHAR_BIT));
 }
 }
 }
